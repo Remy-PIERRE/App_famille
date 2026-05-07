@@ -1,0 +1,29 @@
+import { productServiceFirebase } from "./firebase/productServiceFirebase";
+import { recipeServiceFirebase } from "./firebase/recipeServiceFireabse";
+import { shoppingServiceFirebase } from "./firebase/shoppingServiceFirebase";
+import { authServiceMock } from "./mock/authServiceMock";
+import { eventServiceMock } from "./mock/eventServiceMock";
+import { productServiceMock } from "./mock/productServiceMock";
+import { recipeServiceMock } from "./mock/recipeServiceMock";
+import { shoppingServiceMock } from "./mock/shoppingServiceMock";
+import { taskServiceMock } from "./mock/taskServiceMock";
+
+const MODE = import.meta.env.VITE_DATA_MODE || "mock";
+
+export const authService =
+  MODE === "firebase" ? authServiceMock : authServiceMock;
+
+export const productService =
+  MODE === "firebase" ? productServiceFirebase : productServiceMock;
+
+export const recipeService =
+  MODE === "firebase" ? recipeServiceFirebase : recipeServiceMock;
+
+export const shoppingService =
+  MODE === "firebase" ? shoppingServiceFirebase : shoppingServiceMock;
+
+export const eventService =
+  MODE === "firebase" ? eventServiceMock : eventServiceMock;
+
+export const taskService =
+  MODE === "firebase" ? taskServiceMock : taskServiceMock;
