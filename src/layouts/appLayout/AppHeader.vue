@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import { useAuthStore } from "@/stores/useAuthStore";
 import BaseAvatar from "@/ui/components/base/BaseAvatar.vue";
+
+const authStore = useAuthStore();
 </script>
 
 <template>
@@ -11,6 +14,13 @@ import BaseAvatar from "@/ui/components/base/BaseAvatar.vue";
         <h1>Mon foyer</h1>
         <p>Organisation familiale</p>
       </div>
+
+      <button
+        style="position: absolute; right: 20px"
+        @click="authStore.logout()"
+      >
+        OUT
+      </button>
     </div>
   </header>
 </template>

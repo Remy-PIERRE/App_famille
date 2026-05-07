@@ -133,4 +133,12 @@ const classes = computed(() => [
 .is-rounded {
   border-radius: 999px;
 }
+
+.base-button__content {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+}
 </style>

@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import type { Event } from "@/types/Event";
+import type { CreateEventInput, Event } from "@/types/Event";
 import { eventService } from "@/services";
 
 export const useEventStore = defineStore("events", {
@@ -21,9 +21,9 @@ export const useEventStore = defineStore("events", {
       this.loading = false;
     },
 
-    async add(event: Event) {
-      await eventService.add(event);
-      this.events.push(event);
+    async add(event: CreateEventInput) {
+      const response = await eventService.add(event);
+      this.events.push(response);
     },
 
     async remove(id: string) {
