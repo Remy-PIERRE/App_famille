@@ -14,6 +14,7 @@ import EventsView from "@/modules/events/views/EventsView.vue";
 import EventDetailView from "@/modules/events/views/EventDetailView.vue";
 import RecipeDetailView from "@/modules/recipes/views/RecipeDetailView.vue";
 import { useAuthStore } from "@/stores/useAuthStore";
+import LoginView from "@/views/LoginView.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -102,6 +103,13 @@ const router = createRouter({
           },
         },
       ],
+    },
+    {
+      path: "/login",
+      component: LoginView,
+      meta: {
+        requiresAuth: false,
+      },
     },
   ],
 });
