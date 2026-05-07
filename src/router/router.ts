@@ -1,44 +1,112 @@
 import { createRouter, createWebHistory } from "vue-router";
-import AppLayout from "@/components/layout/AppLayout.vue";
 
+import AppLayout from "@/layouts/appLayout/AppLayout.vue";
+
+// Views
 import HomeView from "@/views/HomeView.vue";
-import TasksView from "@/views/TasksView.vue";
-import ShoppingView from "@/views/ShoppingView.vue";
-import RecipesView from "@/views/RecipesView.vue";
-import EventsView from "@/views/EventsView.vue";
-import RecipeDetailView from "@/views/RecipeDetailView.vue";
-import EventDetailView from "@/views/EventDetailView.vue";
-import LoginView from "@/views/LoginView.vue";
 
+// Modules
+import TasksView from "@/modules/tasks/views/TasksView.vue";
+import ShoppingView from "@/modules/shopping/views/ShoppingView.vue";
+import RecipesView from "@/modules/recipes/views/RecipesView.vue";
+import EventsView from "@/modules/events/views/EventsView.vue";
+
+import EventDetailView from "@/modules/events/views/EventDetailView.vue";
+import RecipeDetailView from "@/modules/recipes/views/RecipeDetailView.vue";
 import { useAuthStore } from "@/stores/useAuthStore";
 
-const routes = [
-  {
-    path: "/login",
-    component: LoginView,
-    meta: { public: true },
-  },
-
-  {
-    path: "/",
-    component: AppLayout,
-    meta: { requiresAuth: true },
-    children: [
-      { path: "", component: HomeView },
-      { path: "tasks", component: TasksView },
-      { path: "shopping", component: ShoppingView },
-      { path: "recipes", component: RecipesView },
-      { path: "events", component: EventsView },
-      { path: "events/:date", component: EventDetailView },
-      { path: "recipes/:id", component: RecipeDetailView },
-    ],
-  },
-];
-
-export const router = createRouter({
+const router = createRouter({
   history: createWebHistory(),
-  routes,
+
+  routes: [
+    {
+      path: "/",
+      component: AppLayout,
+      meta: {
+        requiresAuth: true,
+      },
+
+      children: [
+        {
+          path: "",
+          name: "home",
+          component: HomeView,
+          meta: {
+            title: "Accueil",
+            nav: true,
+            icon: "Home",
+          },
+        },
+
+        {
+          path: "tasks",
+          name: "tasks",
+          component: TasksView,
+          meta: {
+            title: "Tâches",
+            nav: true,
+            icon: "CheckSquare",
+          },
+        },
+
+        {
+          path: "shopping",
+          name: "shopping",
+          component: ShoppingView,
+          meta: {
+            title: "Courses",
+            nav: true,
+            icon: "ShoppingCart",
+          },
+        },
+
+        {
+          path: "recipes",
+          name: "recipes",
+          component: RecipesView,
+          meta: {
+            title: "Recettes",
+            nav: true,
+            icon: "Utensils",
+          },
+        },
+
+        {
+          path: "events",
+          name: "events",
+          component: EventsView,
+          meta: {
+            title: "Événements",
+            nav: true,
+            icon: "Calendar",
+          },
+        },
+
+        {
+          path: "events/:date",
+          name: "event-detail",
+          component: EventDetailView,
+          meta: {
+            title: "Détail événement",
+            nav: false,
+          },
+        },
+
+        {
+          path: "recipes/:id",
+          name: "recipe-detail",
+          component: RecipeDetailView,
+          meta: {
+            title: "Recette",
+            nav: false,
+          },
+        },
+      ],
+    },
+  ],
 });
+
+export default router;
 
 router.beforeEach(async (to) => {
   const auth = useAuthStore();

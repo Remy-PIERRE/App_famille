@@ -1,0 +1,64 @@
+<script setup lang="ts">
+import BaseAvatar from "@/ui/components/base/BaseAvatar.vue";
+</script>
+
+<template>
+  <header class="header">
+    <div class="left">
+      <BaseAvatar class="avatar">M</BaseAvatar>
+
+      <div class="text">
+        <h1>Mon foyer</h1>
+        <p>Organisation familiale</p>
+      </div>
+    </div>
+  </header>
+</template>
+
+<style scoped>
+.header {
+  padding: var(--space-4);
+
+  display: flex;
+  align-items: center;
+
+  justify-content: space-between;
+
+  background: var(--color-surface);
+  backdrop-filter: var(--blur-md);
+
+  border-bottom: 1px solid var(--color-border);
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.avatar {
+  width: 38px;
+  height: 38px;
+
+  background: var(--color-primary);
+  color: white;
+
+  font-weight: 700;
+}
+
+.text h1 {
+  margin: 0;
+
+  font-size: 16px;
+  font-weight: 700;
+
+  color: var(--color-text);
+}
+
+.text p {
+  margin: 0;
+
+  font-size: 12px;
+  color: var(--color-muted);
+}
+</style>

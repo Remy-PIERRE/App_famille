@@ -20,9 +20,6 @@ onMounted(() => {
 </script>
 
 <template>
-  <main>
-    <RouterView />
-
-    <UpdateBanner />
-  </main>
+  <RouterView />
+  <UpdateBanner />
 </template>

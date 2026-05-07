@@ -1,5 +1,9 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import AppPageLayout from "@/ui/layout/AppPageLayout.vue";
+</script>
 
-<template>Home view</template>
-
-<style scoped></style>
+<template>
+  <AppPageLayout title="Tâches" subtitle="Organisation du quotidien">
+    <!-- contenu métier -->
+  </AppPageLayout>
+</template>

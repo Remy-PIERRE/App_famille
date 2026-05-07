@@ -18,14 +18,23 @@ import AppBottomNav from "./AppBottomNav.vue";
 <style scoped>
 .layout {
   min-height: 100vh;
-  background: var(--color-bg);
+
   display: flex;
   flex-direction: column;
+
+  background: radial-gradient(circle at top, #f7f5ef 0%, var(--color-bg) 60%);
+
+  color: var(--color-text);
 }
 
 .content {
   flex: 1;
-  padding: 16px;
-  padding-bottom: 80px; /* espace pour la bottom nav */
+
+  width: 100%;
+  max-width: 980px;
+
+  margin: 0 auto;
+
+  padding: var(--space-5) var(--space-4) 96px;
 }
 </style>

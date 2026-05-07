@@ -1,0 +1,54 @@
+:root {
+  /* =========================
+     COLORS (Nordic Cozy)
+  ========================= */
+
+  --color-primary: #355c4d;
+  --color-primary-soft: #4b7a63;
+
+  --color-bg: #f6f4ef;
+  --color-surface: rgba(255, 255, 255, 0.85);
+
+  --color-text: #1f2937;
+  --color-muted: #6b7280;
+
+  --color-border: rgba(53, 92, 77, 0.12);
+
+  --color-active-bg: rgba(53, 92, 77, 0.1);
+
+  /* =========================
+     SHADOWS
+  ========================= */
+
+  --shadow-soft: 0 6px 20px rgba(0, 0, 0, 0.04);
+  --shadow-floating: 0 10px 30px rgba(0, 0, 0, 0.06);
+
+  /* =========================
+     RADIUS
+  ========================= */
+
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 18px;
+  --radius-xl: 22px;
+
+  /* =========================
+     SPACING
+  ========================= */
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 18px;
+  --space-6: 24px;
+
+  /* =========================
+     EFFECTS
+  ========================= */
+
+  --blur-md: blur(10px);
+  --blur-lg: blur(14px);
+
+  --transition: all 160ms ease;
+}

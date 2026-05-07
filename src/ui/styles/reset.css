@@ -1,0 +1,82 @@
+/* 1. Box sizing */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* 2. Reset margins */
+*:not(dialog) {
+  margin: 0;
+}
+
+/* 3. Root */
+html {
+  height: 100%;
+  scroll-behavior: smooth;
+
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* 4. Body base */
+body {
+  height: 100%;
+
+  line-height: 1.5;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  background: var(--color-bg);
+  color: var(--color-text);
+
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* 5. Media defaults */
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* 6. Form inheritance */
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+/* 7. Text overflow safety */
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  text-wrap: balance;
+}
+
+/* 8. Vue root isolation */
+#app {
+  isolation: isolate;
+}
