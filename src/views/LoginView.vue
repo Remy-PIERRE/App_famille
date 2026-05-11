@@ -26,9 +26,7 @@ async function handleLogin() {
   try {
     isLoading.value = true;
 
-    // MOCK AUTH
-    // await new Promise((resolve) => setTimeout(resolve, 700));
-    await authStore.login("Rémy");
+    await authStore.login({ email: email.value, password: password.value });
 
     router.push("/");
   } catch (e) {

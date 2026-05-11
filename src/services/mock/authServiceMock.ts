@@ -1,13 +1,13 @@
-import type { AuthService } from "@/types/services/AuthService";
+import type { AuthService, LoginInput } from "@/types/services/AuthService";
 import type { User } from "@/types/User";
 
 let currentUser: User | null = null;
 
 export const authServiceMock: AuthService = {
-  async login(name: string) {
+  async login(input: LoginInput) {
     currentUser = {
       id: crypto.randomUUID(),
-      name,
+      email: input.email,
     };
 
     localStorage.setItem("user", JSON.stringify(currentUser));

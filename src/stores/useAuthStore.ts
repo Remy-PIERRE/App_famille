@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { authService } from "@/services";
 import type { User } from "@/types/User";
+import type { LoginInput } from "@/types/services/AuthService";
 
 export const useAuthStore = defineStore("auth", {
   state: () => ({
@@ -19,8 +20,8 @@ export const useAuthStore = defineStore("auth", {
       this.loading = false;
     },
 
-    async login(name: string) {
-      this.user = await authService.login(name);
+    async login(input: LoginInput) {
+      this.user = await authService.login(input);
     },
 
     async logout() {

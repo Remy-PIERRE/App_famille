@@ -1,3 +1,4 @@
+import { authServiceFirebase } from "./firebase/authServiceFirebase";
 import { eventServiceFirebase } from "./firebase/eventServiceFirebase";
 import { productServiceFirebase } from "./firebase/productServiceFirebase";
 import { recipeServiceFirebase } from "./firebase/recipeServiceFireabse";
@@ -13,7 +14,11 @@ const MODE = import.meta.env.VITE_DATA_MODE || "mock";
 const DEV = "test";
 
 export const authService =
-  MODE === "firebase" ? authServiceMock : authServiceMock;
+  MODE === "firebase"
+    ? authServiceFirebase
+    : DEV === "test"
+      ? authServiceFirebase
+      : authServiceMock;
 
 export const productService =
   MODE === "firebase" ? productServiceFirebase : productServiceMock;

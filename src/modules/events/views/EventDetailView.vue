@@ -8,6 +8,7 @@ import AppPageLayout from "@/ui/layout/AppPageLayout.vue";
 
 import BaseButton from "@/ui/components/base/BaseButton.vue";
 import BaseSurface from "@/ui/components/base/BaseSurface.vue";
+import BaseExpendableCard from "@/ui/components/data-display/BaseExpendableCard.vue";
 
 import { useEventStore } from "@/stores/useEventStore";
 
@@ -139,20 +140,21 @@ function removeEvent(id: string) {
 
       <!-- EVENTS -->
       <div v-if="events.length" class="events-list">
-        <BaseSurface
+        <BaseExpendableCard
+          v-if="events.length"
           v-for="event in events"
           :key="event.id"
-          interactive
-          class="event-card"
+          :title="event.title"
+          :subtitle="
+            event.endTime
+              ? `${event.startTime} - ${event.endTime}`
+              : event.startTime
+          "
         >
-          <div class="event-content">
-            <div class="event-info">
-              <div class="event-dot" />
-
-              <span class="event-title">
-                {{ event.title }}
-              </span>
-            </div>
+          <div class="details">
+            <p v-if="event.comment">
+              {{ event.comment }}
+            </p>
 
             <BaseButton
               variant="ghost"
@@ -160,9 +162,10 @@ function removeEvent(id: string) {
               @click="removeEvent(event.id)"
             >
               <Trash2 :size="16" />
+              Supprimer
             </BaseButton>
           </div>
-        </BaseSurface>
+        </BaseExpendableCard>
       </div>
 
       <!-- EMPTY STATE -->
