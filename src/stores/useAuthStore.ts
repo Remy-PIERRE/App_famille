@@ -1,32 +1,77 @@
 import { defineStore } from "pinia";
+
 import { authService } from "@/services";
+
 import type { User } from "@/types/User";
-import type { LoginInput } from "@/types/services/AuthService";
+
+import type { LoginInput, RegisterInput } from "@/types/services/AuthService";
 
 export const useAuthStore = defineStore("auth", {
   state: () => ({
     user: null as User | null,
-    loading: true,
+    isLoading: false,
+    isReady: false,
   }),
 
   getters: {
-    isAuthenticated: (state) => !!state.user,
+    isAuthenticated: (state) => {
+      return !!state.user;
+    },
+
+    householdId: (state) => {
+      return state.user?.householdId ?? null;
+    },
+
+    needsOnboarding(): boolean {
+      return this.isAuthenticated && !this.householdId;
+    },
   },
 
   actions: {
     async init() {
-      this.loading = true;
-      this.user = await authService.getCurrentUser();
-      this.loading = false;
+      try {
+        this.isLoading = true;
+
+        this.user = await authService.getCurrentUser();
+      } finally {
+        this.isReady = true;
+        this.isLoading = false;
+      }
     },
 
     async login(input: LoginInput) {
-      this.user = await authService.login(input);
+      try {
+        this.isLoading = true;
+
+        this.user = await authService.login(input);
+      } finally {
+        this.isLoading = false;
+      }
+    },
+
+    async register(input: RegisterInput) {
+      try {
+        this.isLoading = true;
+
+        this.user = await authService.register(input);
+      } finally {
+        this.isLoading = false;
+      }
     },
 
     async logout() {
-      await authService.logout();
-      this.user = null;
+      try {
+        this.isLoading = true;
+
+        await authService.logout();
+        this.user = null;
+      } finally {
+        this.isLoading = false;
+      }
+    },
+
+    setUser(user: User | null) {
+      this.user = user;
     },
   },
 });

@@ -3,7 +3,6 @@ import { eventServiceFirebase } from "./firebase/eventServiceFirebase";
 import { productServiceFirebase } from "./firebase/productServiceFirebase";
 import { recipeServiceFirebase } from "./firebase/recipeServiceFireabse";
 import { shoppingServiceFirebase } from "./firebase/shoppingServiceFirebase";
-import { authServiceMock } from "./mock/authServiceMock";
 import { eventServiceMock } from "./mock/eventServiceMock";
 import { productServiceMock } from "./mock/productServiceMock";
 import { recipeServiceMock } from "./mock/recipeServiceMock";
@@ -18,7 +17,7 @@ export const authService =
     ? authServiceFirebase
     : DEV === "test"
       ? authServiceFirebase
-      : authServiceMock;
+      : authServiceFirebase;
 
 export const productService =
   MODE === "firebase" ? productServiceFirebase : productServiceMock;

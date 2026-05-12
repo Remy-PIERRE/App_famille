@@ -1,21 +1,38 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
+
+import { ArrowRight, LogIn, UserPlus } from "lucide-vue-next";
 
 import BaseButton from "@/ui/components/base/BaseButton.vue";
 import BaseSurface from "@/ui/components/base/BaseSurface.vue";
+
 import { useAuthStore } from "@/stores/useAuthStore";
 
 const router = useRouter();
 const authStore = useAuthStore();
 
+type Mode = "login" | "register";
+
+const mode = ref<Mode>("login");
+
+const firstName = ref("");
 const email = ref("");
 const password = ref("");
 
 const isLoading = ref(false);
 const error = ref("");
 
-async function handleLogin() {
+const isLogin = computed(() => {
+  return mode.value === "login";
+});
+
+function switchMode(next: Mode) {
+  error.value = "";
+  mode.value = next;
+}
+
+async function handleSubmit() {
   error.value = "";
 
   if (!email.value || !password.value) {
@@ -23,14 +40,35 @@ async function handleLogin() {
     return;
   }
 
+  if (!isLogin.value && !firstName.value.trim()) {
+    error.value = "Veuillez renseigner votre prénom";
+    return;
+  }
+
   try {
     isLoading.value = true;
 
-    await authStore.login({ email: email.value, password: password.value });
+    if (isLogin.value) {
+      await authStore.login({
+        email: email.value,
+        password: password.value,
+      });
 
-    router.push("/");
+      router.push("/");
+      return;
+    }
+
+    await authStore.register({
+      email: email.value,
+      password: password.value,
+      displayName: firstName.value,
+    });
+
+    router.push("/onboarding/household");
   } catch (e) {
-    error.value = "Connexion impossible";
+    error.value = isLogin.value
+      ? "Connexion impossible"
+      : "Création du compte impossible";
   } finally {
     isLoading.value = false;
   }
@@ -38,22 +76,39 @@ async function handleLogin() {
 </script>
 
 <template>
-  <div class="login-page">
+  <div class="auth-page">
     <div class="container">
       <!-- HERO -->
       <div class="hero">
         <div class="logo">🏡</div>
 
-        <h1>Mon foyer</h1>
+        <div class="hero-text">
+          <h1>Mon foyer</h1>
 
-        <p>Organisez votre quotidien familial simplement et chaleureusement.</p>
+          <p>
+            Organisez votre quotidien familial simplement et chaleureusement.
+          </p>
+        </div>
       </div>
 
       <!-- FORM -->
       <BaseSurface class="form-card" padding="lg" radius="lg" elevation="md">
-        <form class="form" @submit.prevent="handleLogin">
+        <form class="form" @submit.prevent="handleSubmit">
+          <!-- REGISTER ONLY -->
+          <div v-if="!isLogin" class="field">
+            <label> Prénom </label>
+
+            <input
+              v-model="firstName"
+              type="text"
+              placeholder="Martin"
+              autocomplete="given-name"
+            />
+          </div>
+
+          <!-- EMAIL -->
           <div class="field">
-            <label>Email</label>
+            <label> Email </label>
 
             <input
               v-model="email"
@@ -63,21 +118,24 @@ async function handleLogin() {
             />
           </div>
 
+          <!-- PASSWORD -->
           <div class="field">
-            <label>Mot de passe</label>
+            <label> Mot de passe </label>
 
             <input
               v-model="password"
               type="password"
               placeholder="••••••••"
-              autocomplete="current-password"
+              :autocomplete="isLogin ? 'current-password' : 'new-password'"
             />
           </div>
 
+          <!-- ERROR -->
           <p v-if="error" class="error">
             {{ error }}
           </p>
 
+          <!-- ACTION -->
           <BaseButton
             type="submit"
             variant="primary"
@@ -85,19 +143,38 @@ async function handleLogin() {
             :disabled="isLoading"
             full-width
           >
-            {{ isLoading ? "Connexion..." : "Se connecter" }}
+            <ArrowRight :size="16" />
+
+            {{
+              isLoading
+                ? isLogin
+                  ? "Connexion..."
+                  : "Création..."
+                : isLogin
+                  ? "Se connecter"
+                  : "Créer mon compte"
+            }}
           </BaseButton>
         </form>
       </BaseSurface>
 
       <!-- FOOTER -->
-      <p class="footer-text">Votre espace familial sécurisé.</p>
+      <div class="footer">
+        <p class="footer-text">Votre espace familial sécurisé.</p>
+
+        <button
+          class="footer-link"
+          @click="switchMode(isLogin ? 'register' : 'login')"
+        >
+          {{ isLogin ? "Créer un compte" : "J’ai déjà un compte" }}
+        </button>
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-.login-page {
+.auth-page {
   min-height: 100vh;
 
   display: flex;
@@ -115,7 +192,7 @@ async function handleLogin() {
 
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
+  gap: var(--space-5);
 }
 
 /* =========================
@@ -123,18 +200,18 @@ async function handleLogin() {
 ========================= */
 
 .hero {
-  text-align: center;
-
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  align-items: center;
+
+  text-align: center;
+
+  gap: var(--space-4);
 }
 
 .logo {
-  width: 74px;
-  height: 74px;
-
-  margin: 0 auto;
+  width: 76px;
+  height: 76px;
 
   display: flex;
   align-items: center;
@@ -150,13 +227,19 @@ async function handleLogin() {
 
   color: white;
 
-  font-size: 34px;
+  font-size: 36px;
 
   box-shadow: var(--shadow-floating);
 }
 
+.hero-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
 .hero h1 {
-  font-size: 30px;
+  font-size: 32px;
   font-weight: 800;
 
   color: var(--color-text);
@@ -180,18 +263,20 @@ async function handleLogin() {
 .form {
   display: flex;
   flex-direction: column;
+
   gap: var(--space-5);
 }
 
 .field {
   display: flex;
   flex-direction: column;
+
   gap: var(--space-2);
 }
 
 .field label {
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
 
   color: var(--color-text);
 }
@@ -202,9 +287,10 @@ async function handleLogin() {
   padding: 14px 16px;
 
   border: 1px solid var(--color-border);
+
   border-radius: var(--radius-md);
 
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.72);
 
   color: var(--color-text);
 
@@ -223,9 +309,9 @@ async function handleLogin() {
 
   border-color: var(--color-primary);
 
-  box-shadow: 0 0 0 4px rgba(53, 92, 77, 0.12);
-
   background: white;
+
+  box-shadow: 0 0 0 4px rgba(53, 92, 77, 0.12);
 }
 
 /* =========================
@@ -249,11 +335,42 @@ async function handleLogin() {
    FOOTER
 ========================= */
 
-.footer-text {
-  text-align: center;
+.footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
+  gap: var(--space-2);
+}
+
+.footer-text {
   font-size: 13px;
+
   color: var(--color-muted);
+}
+
+.footer-link {
+  border: none;
+  background: transparent;
+
+  color: var(--color-primary);
+
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    opacity 160ms ease,
+    transform 120ms ease;
+}
+
+.footer-link:hover {
+  opacity: 0.8;
+}
+
+.footer-link:active {
+  transform: scale(0.98);
 }
 
 /* =========================
@@ -261,12 +378,12 @@ async function handleLogin() {
 ========================= */
 
 @media (min-width: 768px) {
-  .login-page {
+  .auth-page {
     padding: 48px;
   }
 
   .hero h1 {
-    font-size: 34px;
+    font-size: 36px;
   }
 }
 </style>
