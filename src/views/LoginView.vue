@@ -64,11 +64,9 @@ async function handleSubmit() {
       displayName: firstName.value,
     });
 
-    router.push("/onboarding/household");
-  } catch (e) {
-    error.value = isLogin.value
-      ? "Connexion impossible"
-      : "Création du compte impossible";
+    router.push("/onboarding");
+  } catch (err: any) {
+    error.value = err.message || "Une erreur est survenue";
   } finally {
     isLoading.value = false;
   }

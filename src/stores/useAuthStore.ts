@@ -6,6 +6,7 @@ import type { User } from "@/types/User";
 
 import type { LoginInput, RegisterInput } from "@/types/services/AuthService";
 import { useHouseholdStore } from "./useHouseholdStore";
+import { mapFirebaseError } from "@/shared/lib/firebase/mapFirebaseError";
 
 export const useAuthStore = defineStore("auth", {
   state: () => ({
@@ -48,6 +49,8 @@ export const useAuthStore = defineStore("auth", {
 
         const householdStore = useHouseholdStore();
         await householdStore.init();
+      } catch (err: any) {
+        throw new Error(mapFirebaseError(err.code));
       } finally {
         this.isLoading = false;
       }
@@ -58,6 +61,8 @@ export const useAuthStore = defineStore("auth", {
         this.isLoading = true;
 
         this.user = await authService.register(input);
+      } catch (err: any) {
+        throw new Error(mapFirebaseError(err.code));
       } finally {
         this.isLoading = false;
       }
