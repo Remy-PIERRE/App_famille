@@ -133,18 +133,6 @@ router.beforeEach((to) => {
   const needsOnboarding = authStore.needsOnboarding;
   const hasHousehold = !!householdStore.currentHousehold;
 
-  console.log("user : ", authStore.user);
-
-  console.log(
-    "router guard values : ",
-    "isAuth => ",
-    isAuthenticated,
-    "; needsOnboard => ",
-    needsOnboarding,
-    "; hasHouse => ",
-    hasHousehold,
-  );
-
   /* =========================
      GUEST ONLY
   ========================= */

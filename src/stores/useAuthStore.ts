@@ -20,7 +20,6 @@ export const useAuthStore = defineStore("auth", {
     },
 
     householdId: (state) => {
-      console.log("state : ", state.user, state.user?.householdId);
       return state.user?.householdId ?? null;
     },
 
