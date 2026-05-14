@@ -41,13 +41,9 @@ export const householdServiceFirebase: HouseholdService = {
 
     return {
       id: docRef.id,
-
       name: input.name,
-
       inviteCode,
-
       members: [userId],
-
       createdAt: Date.now(),
     };
   },

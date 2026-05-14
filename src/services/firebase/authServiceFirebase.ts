@@ -5,7 +5,13 @@ import {
   signOut,
   updateProfile,
 } from "firebase/auth";
-import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  serverTimestamp,
+  setDoc,
+  updateDoc,
+} from "firebase/firestore";
 import { auth, db } from "@/config/firebase";
 import { mapFirebaseUser } from "@/mappers/user";
 
@@ -96,5 +102,11 @@ export const authServiceFirebase: AuthService = {
         resolve(user);
       });
     });
+  },
+
+  async updateUser(userId: string, data: Partial<User>) {
+    const ref = doc(db, "users", userId);
+
+    await updateDoc(ref, data);
   },
 };

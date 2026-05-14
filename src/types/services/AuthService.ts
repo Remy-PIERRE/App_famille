@@ -19,4 +19,6 @@ export interface AuthService {
   logout(): Promise<void>;
 
   getCurrentUser(): Promise<User | null>;
+
+  updateUser(userId: string, data: Partial<User>): Promise<void>;
 }

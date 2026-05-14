@@ -7,6 +7,7 @@ import type { User } from "@/types/User";
 import type { LoginInput, RegisterInput } from "@/types/services/AuthService";
 import { useHouseholdStore } from "./useHouseholdStore";
 import { mapFirebaseError } from "@/shared/lib/firebase/mapFirebaseError";
+import { authServiceFirebase } from "@/services/firebase/authServiceFirebase";
 
 export const useAuthStore = defineStore("auth", {
   state: () => ({
@@ -81,6 +82,19 @@ export const useAuthStore = defineStore("auth", {
 
     setUser(user: User | null) {
       this.user = user;
+    },
+
+    async updateUser(data: Partial<User>) {
+      if (!this.user) {
+        return;
+      }
+
+      await authServiceFirebase.updateUser(this.user.id, data);
+
+      this.user = {
+        ...this.user,
+        ...data,
+      };
     },
   },
 });

@@ -8,6 +8,7 @@ import BaseSurface from "@/ui/components/base/BaseSurface.vue";
 import { useAuthStore } from "@/stores/useAuthStore";
 
 import { householdServiceFirebase } from "../services";
+import { useHouseholdStore } from "@/stores/useHouseholdStore";
 
 const router = useRouter();
 
@@ -32,11 +33,16 @@ async function joinHousehold() {
   try {
     isLoading.value = true;
 
-    await householdServiceFirebase.join(authStore.user.id, {
+    const household = await householdServiceFirebase.join(authStore.user.id, {
       inviteCode: inviteCode.value.trim().toUpperCase(),
     });
 
-    authStore.user.householdId = "updated";
+    await authStore.updateUser({
+      householdId: household.id,
+    });
+
+    const householdStore = useHouseholdStore();
+    await householdStore.init();
 
     router.push("/");
   } catch (e) {
