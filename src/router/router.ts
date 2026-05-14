@@ -1,133 +1,181 @@
 import { createRouter, createWebHistory } from "vue-router";
 
+import { useAuthStore } from "@/stores/useAuthStore";
+
+/* LAYOUT */
 import AppLayout from "@/layouts/appLayout/AppLayout.vue";
 
-// Views
-import HomeView from "@/views/HomeView.vue";
+/* AUTH */
+import LoginView from "@/views/LoginView.vue";
 
-// Modules
+/* ONBOARDING */
+import HouseholdChoiceView from "@/modules/household/views/HouseholdChoiceView.vue";
+import CreateHouseholdView from "@/modules/household/views/CreateHouseholdView.vue";
+import JoinHouseholdView from "@/modules/household/views/JoinHouseholdView.vue";
+
+/* APP */
+import HomeView from "@/views/HomeView.vue";
 import TasksView from "@/modules/tasks/views/TasksView.vue";
 import ShoppingView from "@/modules/shopping/views/ShoppingView.vue";
 import RecipesView from "@/modules/recipes/views/RecipesView.vue";
-import EventsView from "@/modules/events/views/EventsView.vue";
-
-import EventDetailView from "@/modules/events/views/EventDetailView.vue";
 import RecipeDetailView from "@/modules/recipes/views/RecipeDetailView.vue";
-import { useAuthStore } from "@/stores/useAuthStore";
-import LoginView from "@/views/LoginView.vue";
+import EventsView from "@/modules/events/views/EventsView.vue";
+import EventDetailView from "@/modules/events/views/EventDetailView.vue";
+import { useHouseholdStore } from "@/stores/useHouseholdStore";
 
 const router = createRouter({
   history: createWebHistory(),
 
   routes: [
+    /* =========================
+       AUTH
+    ========================= */
+    {
+      path: "/login",
+      component: LoginView,
+      meta: {
+        guestOnly: true,
+      },
+    },
+
+    /* =========================
+       ONBOARDING
+    ========================= */
+    {
+      path: "/onboarding",
+      meta: {
+        requiresAuth: true,
+      },
+      children: [
+        {
+          path: "",
+          component: HouseholdChoiceView,
+        },
+        {
+          path: "create",
+          component: CreateHouseholdView,
+        },
+        {
+          path: "join",
+          component: JoinHouseholdView,
+        },
+      ],
+    },
+
+    /* =========================
+       APP
+    ========================= */
     {
       path: "/",
       component: AppLayout,
+
       meta: {
         requiresAuth: true,
+        requiresHousehold: true,
       },
 
       children: [
         {
           path: "",
-          name: "home",
+
           component: HomeView,
-          meta: {
-            title: "Accueil",
-            nav: true,
-            icon: "Home",
-          },
         },
 
         {
           path: "tasks",
-          name: "tasks",
+
           component: TasksView,
-          meta: {
-            title: "Tâches",
-            nav: true,
-            icon: "CheckSquare",
-          },
         },
 
         {
           path: "shopping",
-          name: "shopping",
+
           component: ShoppingView,
-          meta: {
-            title: "Courses",
-            nav: true,
-            icon: "ShoppingCart",
-          },
         },
 
         {
           path: "recipes",
-          name: "recipes",
+
           component: RecipesView,
-          meta: {
-            title: "Recettes",
-            nav: true,
-            icon: "Utensils",
-          },
-        },
-
-        {
-          path: "events",
-          name: "events",
-          component: EventsView,
-          meta: {
-            title: "Événements",
-            nav: true,
-            icon: "Calendar",
-          },
-        },
-
-        {
-          path: "events/:date",
-          name: "event-detail",
-          component: EventDetailView,
-          meta: {
-            title: "Détail événement",
-            nav: false,
-          },
         },
 
         {
           path: "recipes/:id",
-          name: "recipe-detail",
+
           component: RecipeDetailView,
-          meta: {
-            title: "Recette",
-            nav: false,
-          },
+        },
+
+        {
+          path: "events",
+
+          component: EventsView,
+        },
+
+        {
+          path: "events/:date",
+
+          component: EventDetailView,
         },
       ],
-    },
-    {
-      path: "/login",
-      component: LoginView,
-      meta: {
-        requiresAuth: false,
-      },
     },
   ],
 });
 
-export default router;
+/* =========================
+   GUARDS
+========================= */
 
-router.beforeEach(async (to) => {
-  const auth = useAuthStore();
+router.beforeEach((to) => {
+  const authStore = useAuthStore();
+  const householdStore = useHouseholdStore();
 
-  if (auth.loading) {
-    await auth.init();
+  const isAuthenticated = authStore.isAuthenticated;
+  const needsOnboarding = authStore.needsOnboarding;
+  const hasHousehold = !!householdStore.currentHousehold;
+
+  console.log("user : ", authStore.user);
+
+  console.log(
+    "router guard values : ",
+    "isAuth => ",
+    isAuthenticated,
+    "; needsOnboard => ",
+    needsOnboarding,
+    "; hasHouse => ",
+    hasHousehold,
+  );
+
+  /* =========================
+     GUEST ONLY
+  ========================= */
+
+  if (to.meta.guestOnly && isAuthenticated) {
+    return needsOnboarding ? "/onboarding" : "/";
   }
 
-  if (to.meta.requiresAuth && !auth.isAuthenticated) {
+  /* =========================
+     AUTH REQUIRED
+  ========================= */
+
+  if (to.meta.requiresAuth && !isAuthenticated) {
     return "/login";
   }
 
-  if (to.path === "/login" && auth.isAuthenticated) {
+  /* =========================
+     ONBOARDING
+  ========================= */
+
+  if (isAuthenticated && !hasHousehold && !to.path.startsWith("/onboarding")) {
+    return "/onboarding";
+  }
+
+  /* =========================
+     BLOCK ONBOARDING
+  ========================= */
+
+  if (hasHousehold && to.path.startsWith("/onboarding")) {
     return "/";
   }
 });
+
+export default router;

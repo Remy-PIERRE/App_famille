@@ -5,6 +5,7 @@ import { authService } from "@/services";
 import type { User } from "@/types/User";
 
 import type { LoginInput, RegisterInput } from "@/types/services/AuthService";
+import { useHouseholdStore } from "./useHouseholdStore";
 
 export const useAuthStore = defineStore("auth", {
   state: () => ({
@@ -19,6 +20,7 @@ export const useAuthStore = defineStore("auth", {
     },
 
     householdId: (state) => {
+      console.log("state : ", state.user, state.user?.householdId);
       return state.user?.householdId ?? null;
     },
 
@@ -44,6 +46,9 @@ export const useAuthStore = defineStore("auth", {
         this.isLoading = true;
 
         this.user = await authService.login(input);
+
+        const householdStore = useHouseholdStore();
+        await householdStore.init();
       } finally {
         this.isLoading = false;
       }

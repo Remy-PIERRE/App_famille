@@ -2,7 +2,7 @@
 import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 
-import { ArrowRight, LogIn, UserPlus } from "lucide-vue-next";
+import { ArrowRight } from "lucide-vue-next";
 
 import BaseButton from "@/ui/components/base/BaseButton.vue";
 import BaseSurface from "@/ui/components/base/BaseSurface.vue";
