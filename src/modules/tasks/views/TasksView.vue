@@ -1,141 +1,68 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
-import { useTaskStore } from "@/stores/useTaskStore";
-import BaseCard from "@/components/ui/BaseCard.vue";
-import BaseButton from "@/components/ui/BaseButton.vue";
-import BaseInput from "@/components/ui/BaseInput.vue";
-import { statusColor } from "@/assets/const/task";
-import type { Task } from "@/types/Task";
+import { computed, onMounted } from "vue";
 
-const store = useTaskStore();
+import AppPageLayout from "@/ui/layout/AppPageLayout.vue";
+
+import TaskList from "../components/task-list/TaskList.vue";
+import TasksHero from "../components/section/TasksHero.vue";
+import TaskQuickActions from "../components/quick-actions/TaskQuickActions.vue";
+import FloatingActionButton from "@/ui/components/mobile-ux/FloatingActionButton.vue";
+import { useTasksStore } from "../stores/useTaskStore";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+const tasksStore = useTasksStore();
 
 onMounted(() => {
-  store.fetch();
+  tasksStore.subscribeToTasks();
 });
 
-const newTask = ref("");
+const todayTasks = computed(() => tasksStore.todayTasks);
+const overdueTasks = computed(() => []);
 
-const filterStatus = ref("");
-const filterPriority = ref("");
-
-const tasks = computed(() =>
-  store.filteredTasks({
-    status: filterStatus.value || undefined,
-    priority: filterPriority.value || undefined,
-  }),
-);
-
-function addTask() {
-  if (!newTask.value) return;
-
-  store.add({
-    id: crypto.randomUUID(),
-    title: newTask.value,
-    status: "todo",
-    priority: "medium",
-  });
-
-  newTask.value = "";
+function handleCreateTask() {
+  router.push("/tasks/new");
 }
 
-function toggleStatus(task: Task) {
-  const next =
-    task.status === "todo"
-      ? "in_progress"
-      : task.status === "in_progress"
-        ? "done"
-        : "todo";
-
-  store.update({ ...task, status: next });
+async function handleCompleteTask(taskId: string) {
+  await tasksStore.completeTask(taskId);
 }
 </script>
 
 <template>
-  <div class="page">
-    <h1>Tâches</h1>
+  <AppPageLayout class="tasks-view">
+    <div class="tasks-view__content">
+      <TasksHero :tasks-count="todayTasks.length" />
 
-    <!-- ajout -->
-    <BaseCard>
-      <div class="add">
-        <BaseInput v-model="newTask" placeholder="Nouvelle tâche" />
-        <BaseButton label="Ajouter" @click="addTask" />
-      </div>
-    </BaseCard>
+      <TaskQuickActions />
 
-    <!-- filtres -->
-    <BaseCard>
-      <div class="filters">
-        <select v-model="filterStatus">
-          <option value="">Tous statuts</option>
-          <option value="todo">À faire</option>
-          <option value="in_progress">En cours</option>
-          <option value="done">Terminé</option>
-        </select>
+      <TaskList
+        title="Aujourd’hui"
+        :tasks="todayTasks"
+        @complete="handleCompleteTask"
+      />
 
-        <select v-model="filterPriority">
-          <option value="">Toutes priorités</option>
-          <option value="low">Faible</option>
-          <option value="medium">Moyenne</option>
-          <option value="high">Haute</option>
-        </select>
-      </div>
-    </BaseCard>
+      <TaskList
+        title="En retard"
+        :tasks="overdueTasks"
+        empty-message="Aucune tâche en retard ✨"
+      />
+    </div>
 
-    <!-- liste -->
-    <BaseCard
-      v-for="task in tasks"
-      :key="task.id"
-      class="task"
-      @click="toggleStatus(task)"
-    >
-      <div class="row">
-        <span class="title">{{ task.title }}</span>
-
-        <span class="status" :style="{ background: statusColor[task.status] }">
-          {{ task.status }}
-        </span>
-      </div>
-    </BaseCard>
-
-    <p v-if="!tasks.length" class="empty">Aucune tâche</p>
-  </div>
+    <FloatingActionButton label="+" @click="handleCreateTask" />
+  </AppPageLayout>
 </template>
 
 <style scoped>
-.page {
+.tasks-view {
+  min-height: 100%;
+}
+
+.tasks-view__content {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-}
+  gap: var(--space-6);
 
-.add {
-  display: flex;
-  gap: 8px;
-}
-
-.filters {
-  display: flex;
-  gap: 8px;
-}
-
-.task {
-  cursor: pointer;
-}
-
-.row {
-  display: flex;
-  justify-content: space-between;
-}
-
-.status {
-  padding: 4px 8px;
-  border-radius: 8px;
-  color: white;
-  font-size: 12px;
-}
-
-.empty {
-  text-align: center;
-  color: var(--color-gray-dark);
+  padding-bottom: 96px;
 }
 </style>

@@ -51,4 +51,12 @@
   --blur-lg: blur(14px);
 
   --transition: all 160ms ease;
+
+  /* =========================
+   LAYOUT
+========================= */
+
+  --bottom-nav-height: 76px;
+
+  --fab-offset-bottom: calc(var(--bottom-nav-height) + var(--space-5));
 }

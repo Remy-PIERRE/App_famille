@@ -46,6 +46,7 @@ const items = [
   bottom: var(--space-3);
   left: var(--space-3);
   right: var(--space-3);
+  z-index: 20;
 
   display: flex;
   justify-content: space-between;

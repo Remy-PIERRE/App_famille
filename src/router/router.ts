@@ -22,6 +22,8 @@ import RecipeDetailView from "@/modules/recipes/views/RecipeDetailView.vue";
 import EventsView from "@/modules/events/views/EventsView.vue";
 import EventDetailView from "@/modules/events/views/EventDetailView.vue";
 import { useHouseholdStore } from "@/stores/useHouseholdStore";
+import TaskFormView from "@/modules/tasks/views/TaskFormView.vue";
+import TaskDetailsView from "@/modules/tasks/views/TaskDetailsView.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -77,14 +79,24 @@ const router = createRouter({
       children: [
         {
           path: "",
-
           component: HomeView,
         },
 
         {
           path: "tasks",
-
           component: TasksView,
+        },
+        {
+          path: "/tasks/new",
+          component: TaskFormView,
+        },
+        {
+          path: "/tasks/:id",
+          component: TaskDetailsView,
+        },
+        {
+          path: "/tasks/:id/edit",
+          component: TaskFormView,
         },
 
         {
